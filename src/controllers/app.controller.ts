@@ -1,0 +1,5 @@
+import type { Request, Response } from "express";
+
+export const home = async (req: Request, res: Response) => {
+  res.send("hi!")
+}
