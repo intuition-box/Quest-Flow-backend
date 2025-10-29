@@ -1,6 +1,6 @@
-import express, { type Response, type Request } from "express";
+import express from "express";
 import cors from "cors";
-import { port } from "@/utils/env";
+import { port } from "@/utils/env.utils";
 import DB from "@/config/db";
 import logger from "@/config/logger";
 import appRoutes from "@/routes/appRoutes";
