@@ -3,7 +3,7 @@ import cors from "cors";
 import { port } from "@/utils/env.utils";
 import DB from "@/config/db";
 import logger from "@/config/logger";
-import appRoutes from "@/routes/appRoutes";
+import appRoutes from "@/routes";
 import helmet from "helmet";
 
 const server = express();
