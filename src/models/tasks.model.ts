@@ -10,7 +10,7 @@ const ecosystemTaskSchema = new Schema({
     required: true
   },
   timer: {
-    type: String,
+    type: Number,
     required: true
   },
   logo: {
@@ -55,7 +55,7 @@ const campaignTaskSchema = new Schema({
   },
   campaign: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "campaigns"
+    ref: "campaign"
   }
 }, { timestamps: true });
 
@@ -69,10 +69,6 @@ const questSchema = new Schema({
   description: {
     type: String,
     required: true
-  },
-  done: {
-    type: Boolean,
-    default: false
   },
   reward: {
     xp: {

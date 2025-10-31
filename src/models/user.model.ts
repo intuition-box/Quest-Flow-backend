@@ -5,6 +5,9 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  email: {
+    type: String
+  },
   level: {
     type: String,
     default: "Lv1"
@@ -37,7 +40,33 @@ const userSchema = new Schema({
       default: 0
     }
   },
+  dailyTasks: {
+    task1: {
+      type: Boolean,
+      default: false
+    },
+    task2: {
+      type: Boolean,
+      default: false
+    },
+    task3: {
+      type: Boolean,
+      default: false
+    },
+    task4: {
+      type: Boolean,
+      default: false
+    },
+    done: {
+      type: Boolean,
+      default: false
+    }
+  },
   questsCompleted: {
+    type: Number,
+    default: 0
+  },
+  campaignsCompleted: {
     type: Number,
     default: 0
   },
@@ -48,7 +77,11 @@ const userSchema = new Schema({
   dateJoined: {
     type: String,
     required: true
-  }
+  },
+  campaigns: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "campaign"
+  }]
 }, { timestamps: true });
 
 export const user = mongoose.model("users", userSchema);
