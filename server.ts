@@ -13,7 +13,7 @@ server.use(helmet());
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 
-server.get("/api", appRoutes);
+server.use("/api", appRoutes);
 
 server.listen(port, async () => {
 	await DB();
