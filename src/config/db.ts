@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DB_URI } from "@/utils/env";
+import { DB_URI } from "@/utils/env.utils";
 import logger from "./logger";
 
 const connectDB = async () => {

@@ -1,9 +1,9 @@
-import express, { type Response, type Request } from "express";
+import express from "express";
 import cors from "cors";
-import { port } from "@/utils/env";
+import { port } from "@/utils/env.utils";
 import DB from "@/config/db";
 import logger from "@/config/logger";
-import appRoutes from "@/routes/appRoutes";
+import appRoutes from "@/routes";
 import helmet from "helmet";
 
 const server = express();
@@ -13,7 +13,7 @@ server.use(helmet());
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 
-server.get("/api", appRoutes);
+server.use("/api", appRoutes);
 
 server.listen(port, async () => {
 	await DB();
