@@ -4,7 +4,7 @@ import { BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR } from "@/utils/status.util
 import { formatDate } from "date-fns";
 import { user } from "@/models/user.model";
 
-export const signIn = async (req: GlobalRequest, res: GlobalResponse) => {
+export const signUp = async (req: GlobalRequest, res: GlobalResponse) => {
 	try {
     const { username, referrer }: { username: string, referrer?: string } = req.body;
 
@@ -33,6 +33,16 @@ export const signIn = async (req: GlobalRequest, res: GlobalResponse) => {
     res.status(CREATED).json({ message: "user created!" })
 	} catch (error) {
 		logger.error(error);
-		res.status(INTERNAL_SERVER_ERROR).json({ error: "Error signing user in" });
+		res.status(INTERNAL_SERVER_ERROR).json({ error: "Error signing user up" });
+	}
+};
+
+export const projectSignUp = async (req: GlobalRequest, res: GlobalResponse) => {
+	try {
+
+		res.status(CREATED).json({ message: "project created!" });
+	} catch (error) {
+		logger.error(error);
+		res.status(INTERNAL_SERVER_ERROR).json({ error: "Error signing project up" });
 	}
 };
