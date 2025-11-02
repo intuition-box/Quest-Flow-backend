@@ -11,7 +11,8 @@ export const validateCampaignData = (reqData: any) => {
       xp: z.number(),
       tTrust: z.number()
     }),
-    totaltTrustAvailable: z.number()
+    totaltTrustAvailable: z.number(),
+    contractAddress: z.string().optional()
   });
 
   const parseData = campaignSchema.safeParse(reqData);
