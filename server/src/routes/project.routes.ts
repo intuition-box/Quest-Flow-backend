@@ -5,6 +5,6 @@ const router = Router();
 
 router
   .post("/sign-up", projectSignUp)
-  .post("/sign-in");
+  // .post("/sign-in");
 
 export default router;
