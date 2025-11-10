@@ -1,4 +1,6 @@
+import jwt from "jsonwebtoken";
 import { z } from "zod";
+import { JWT_SECRET } from "./env.utils";
 
 export const validateCampaignData = (reqData: any) => {
   const campaignSchema = z.object({
@@ -76,3 +78,22 @@ export const validateEcosystemTaskData = (reqData: any) => {
 
 	return parseData;
 };
+
+export const JWT = {
+  sign: (id: any) => {
+    return jwt.sign({ id }, JWT_SECRET, { expiresIn: "1d" });
+  },
+
+  verify: (jwtToken: string) => {
+    return new Promise((resolve, reject) => {
+      jwt.verify(jwtToken, JWT_SECRET, (error, decodedText) => {
+				if (error) reject(error.message);
+				else if (typeof decodedText === "object") {
+					resolve(decodedText);
+				} else {
+					reject("Invalid JWT payload");
+				}
+			});
+    })
+  }
+}
