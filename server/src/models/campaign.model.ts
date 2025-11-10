@@ -46,6 +46,9 @@ const campaignSchema = new Schema({
     default: "Active",
     enum: ["Active", "Scheduled", "Ended"]
   },
+  contractAddress: {
+    type: String,
+  },
   reward: {
     xp: {
       type: Number,
