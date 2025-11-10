@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { z } from "zod";
-import { JWT_SECRET } from "./env.utils";
+import { JWT_SECRET, REFRESH_SECRET } from "./env.utils";
 
 export const validateCampaignData = (reqData: any) => {
   const campaignSchema = z.object({
@@ -80,8 +80,8 @@ export const validateEcosystemTaskData = (reqData: any) => {
 };
 
 export const JWT = {
-  sign: (id: any) => {
-    return jwt.sign({ id }, JWT_SECRET, { expiresIn: "1d" });
+  sign: (data: any) => {
+    return jwt.sign(data, JWT_SECRET, { expiresIn: "1d" });
   },
 
   verify: (jwtToken: string) => {
@@ -96,4 +96,8 @@ export const JWT = {
 			});
     })
   }
+}
+
+export const getRefreshToken = (id: any) => {
+  return jwt.sign({ id }, REFRESH_SECRET, { expiresIn: "30d" });
 }
