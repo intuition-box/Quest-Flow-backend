@@ -68,7 +68,7 @@ const campaignSchema = new Schema({
     required: true
   },
   creator: {
-    types: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "user"
   }
 }, { timestamps: true });
