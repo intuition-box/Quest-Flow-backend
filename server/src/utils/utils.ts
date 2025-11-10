@@ -1,4 +1,6 @@
+import jwt from "jsonwebtoken";
 import { z } from "zod";
+import { JWT_SECRET, REFRESH_SECRET } from "./env.utils";
 
 export const validateCampaignData = (reqData: any) => {
   const campaignSchema = z.object({
@@ -11,7 +13,8 @@ export const validateCampaignData = (reqData: any) => {
       xp: z.number(),
       tTrust: z.number()
     }),
-    totaltTrustAvailable: z.number()
+    totaltTrustAvailable: z.number(),
+    contractAddress: z.string().optional()
   });
 
   const parseData = campaignSchema.safeParse(reqData);
@@ -75,3 +78,26 @@ export const validateEcosystemTaskData = (reqData: any) => {
 
 	return parseData;
 };
+
+export const JWT = {
+  sign: (data: any) => {
+    return jwt.sign(data, JWT_SECRET, { expiresIn: "1d" });
+  },
+
+  verify: (jwtToken: string) => {
+    return new Promise((resolve, reject) => {
+      jwt.verify(jwtToken, JWT_SECRET, (error, decodedText) => {
+				if (error) reject(error.message);
+				else if (typeof decodedText === "object") {
+					resolve(decodedText);
+				} else {
+					reject("Invalid JWT payload");
+				}
+			});
+    })
+  }
+}
+
+export const getRefreshToken = (id: any) => {
+  return jwt.sign({ id }, REFRESH_SECRET, { expiresIn: "30d" });
+}

@@ -63,9 +63,9 @@ export const createCampaign = async (req: GlobalRequest, res: GlobalResponse) =>
 
     requestData.creator = projectUserId as string;
 
-    requestData.projectCoverImage = "";
+    requestData.projectCoverImage = "img";
 
-    requestData.logo = "";
+    requestData.logo = "img";
 
     const newCampaign = new campaign(requestData);
 

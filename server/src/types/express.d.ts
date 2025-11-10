@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 declare global {
 
@@ -7,4 +7,6 @@ declare global {
   };
 
   type GlobalResponse = Response;
+
+  type GlobalNextFunction = NextFunction;
 }
