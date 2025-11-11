@@ -79,6 +79,18 @@ export const validateEcosystemTaskData = (reqData: any) => {
 	return parseData;
 };
 
+export const validateProjectData = (reqData: any) => {
+  const projectSchema = z.object({
+    name: z.string().trim(),
+    email: z.email().trim(),
+    logo: z.string().trim(),
+  });
+
+  const parseData = projectSchema.safeParse(reqData);
+
+  return parseData;
+}
+
 export const JWT = {
   sign: (data: any) => {
     return jwt.sign(data, JWT_SECRET, { expiresIn: "1d" });

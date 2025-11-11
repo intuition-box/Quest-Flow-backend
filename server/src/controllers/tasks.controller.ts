@@ -3,6 +3,7 @@ import { campaign, campaignCompleted } from "@/models/campaign.model";
 import { campaignTask, ecosystemTask, quest } from "@/models/tasks.model";
 import { campaignTaskCompleted, ecosystemTaskCompleted, questCompleted } from "@/models/tasksCompleted.models";
 import { user } from "@/models/user.model";
+import { performIntuitionOnchainAction } from "@/utils/account";
 import { INTERNAL_SERVER_ERROR, OK, BAD_REQUEST, FORBIDDEN, NOT_FOUND } from "@/utils/status.utils";
 import { validateEcosystemTaskData, validateTaskData } from "@/utils/utils";
 
@@ -53,7 +54,8 @@ export const fetchQuests = async (req: GlobalRequest, res: GlobalResponse) => {
 
 export const fetchCampaignTasks = async (req: GlobalRequest, res: GlobalResponse) => {
   try {
-    const id = req.query.id as string;
+		const id = req.query.id as string;
+		const userId = req.id!;
 
 		const currentCampaign = await campaign.findById(id);
 		if (!currentCampaign) {
@@ -63,9 +65,9 @@ export const fetchCampaignTasks = async (req: GlobalRequest, res: GlobalResponse
 
 		const tasks = await campaignTask.find({ campaign: id });
 		
-		const campaignTasksCompleted = await campaignTaskCompleted.find({ user: req.id, campaign: id });
+		const campaignTasksCompleted = await campaignTaskCompleted.find({ user: userId, campaign: id });
 
-		const completedCampaign = await campaignCompleted.findOne({ user: req.id, campaign: id });
+		const completedCampaign = await campaignCompleted.findOne({ user: userId, campaign: id });
 
 		const campaignTasks: any[] = [];
 
@@ -86,6 +88,12 @@ export const fetchCampaignTasks = async (req: GlobalRequest, res: GlobalResponse
 
 		if (currentCampaign.noOfTasks === campaignTasksCompleted.length) {
 			completedCampaign!.tasksCompleted = true;
+
+			await performIntuitionOnchainAction({
+				action: "allow-claim",
+				userId,
+				contractAddress: currentCampaign.contractAddress!
+			});
 
 			await completedCampaign?.save();
 		}

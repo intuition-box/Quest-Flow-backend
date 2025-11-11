@@ -7,8 +7,8 @@ import {
 } from "@/utils/status.utils";
 import { formatDate } from "date-fns";
 import { user } from "@/models/user.model";
-import { getRefreshToken, JWT } from "@/utils/utils";
-import { project } from "@/models/projects.model";
+import { getRefreshToken, JWT, validateProjectData } from "@/utils/utils";
+import { project } from "@/models/project.model";
 
 export const signUp = async (req: GlobalRequest, res: GlobalResponse) => {
 	try {
@@ -35,11 +35,11 @@ export const signUp = async (req: GlobalRequest, res: GlobalResponse) => {
 
 		const userReferrer = await user.findOne({ referral: { code: referrer } });
 
-    const newUser = new user({ username, referral, dateJoined });
+		const newUser = new user({ username, referral, dateJoined });
 
 		if (userReferrer) {
-      await userReferrer.updateOne({ $inc: { xp: 10, "referral.xp": 10 } });
-      newUser.xp = 10;
+			await userReferrer.updateOne({ $inc: { xp: 10, "referral.xp": 10 } });
+			newUser.xp = 10;
 			await newUser.save();
 		}
 
@@ -53,7 +53,7 @@ export const signUp = async (req: GlobalRequest, res: GlobalResponse) => {
 		res.cookie("refreshToken", refreshToken, {
 			httpOnly: true,
 			secure: true,
-			maxAge: 7 * 24 * 60 * 60,
+			maxAge: 30 * 24 * 60 * 60,
 		});
 
 		res.status(CREATED).json({ message: "user created!", accessToken });
@@ -63,13 +63,24 @@ export const signUp = async (req: GlobalRequest, res: GlobalResponse) => {
 	}
 };
 
-export const projectSignUp = async (req: GlobalRequest, res: GlobalResponse) => {
-  try {
-    const logo = "logo-p";
+export const projectSignUp = async (
+	req: GlobalRequest,
+	res: GlobalResponse
+) => {
+	try {
+		const logo = "logo-p";
 
-    req.body.logo = logo;
+		req.body.logo = logo;
 
-    const projectUser = await project.create(req.body);
+		const { success } = validateProjectData(req.body);
+		if (!success) {
+			res
+				.status(BAD_REQUEST)
+				.json({ error: "send the correct data required to create a project" });
+			return;
+		}
+
+		const projectUser = await project.create(req.body);
 
 		const id = projectUser._id;
 

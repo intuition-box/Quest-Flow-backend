@@ -1,7 +1,8 @@
 import logger from "@/config/logger";
 import { campaign, campaignCompleted } from "@/models/campaign.model";
-import { project } from "@/models/projects.model";
+import { project } from "@/models/project.model";
 import { user } from "@/models/user.model";
+import { performIntuitionOnchainAction } from "@/utils/account";
 import { OK, INTERNAL_SERVER_ERROR, CREATED, BAD_REQUEST, NOT_FOUND, FORBIDDEN, UNAUTHORIZED } from "@/utils/status.utils";
 import { validateCampaignData } from "@/utils/utils";
 
@@ -44,7 +45,7 @@ export const createCampaign = async (req: GlobalRequest, res: GlobalResponse) =>
       res.status(NOT_FOUND).json({ error: "id associated with user is invalid" });
       return;
     }
-    
+
     const xpAllocated = campaignCreator.xpAllocated;
     if (xpAllocated === 0) {
       res.status(FORBIDDEN).json({ error: "contact nexura team to recieve xp allocation" });
@@ -84,6 +85,27 @@ export const createCampaign = async (req: GlobalRequest, res: GlobalResponse) =>
   }
 }
 
+export const addCampaignAddress = async (req: GlobalRequest, res: GlobalResponse) => {
+  try {
+    const { id, contractAddress }: { id: string; contractAddress: string } = req.body;
+
+    const foundCampaign = await campaign.findById(id);
+    if (!foundCampaign) {
+      res.status(NOT_FOUND).json({ error: "id associated with campaign is invalid" });
+      return;
+    }
+
+    foundCampaign.contractAddress = contractAddress;
+
+    await foundCampaign.save();
+
+    res.status(OK).json({ message: "campaign address added!" });
+  } catch (error) {
+    logger.error(error);
+    res.status(INTERNAL_SERVER_ERROR).json({ error: "error adding campaign address!" });
+  }
+}
+
 export const joinCampaign = async (req: GlobalRequest, res: GlobalResponse) => {
   try {
     const id = req.query.id;
@@ -107,6 +129,12 @@ export const joinCampaign = async (req: GlobalRequest, res: GlobalResponse) => {
       campaignToJoin.participants += 1;
 
       await campaignToJoin.save();
+
+      await performIntuitionOnchainAction({
+        action: "join",
+        userId,
+        contractAddress: campaignToJoin.contractAddress!
+      });
 
       res.status(OK).json({ message: "campaign joined" });
       return;      
