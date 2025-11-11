@@ -44,7 +44,7 @@ export const performIntuitionOnchainAction = async ({
 				chain: intuitionTestnet,
 			});
 			return;
-    case "allowClaim":
+    case "allow-claim":
       await walletClient.writeContract({
 				address: contractAddress as GlobalAddress,
 				abi: parseAbi([
@@ -56,7 +56,7 @@ export const performIntuitionOnchainAction = async ({
 				chain: intuitionTestnet,
 			});
 			return;
-    case "allowMint":
+    case "allow-mint":
       const address = NexonsAddress[lvl!]!;
       await walletClient.writeContract({
 				address,
