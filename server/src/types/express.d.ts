@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
+import { Address } from "viem";
 
 declare global {
 
@@ -9,4 +10,6 @@ declare global {
   type GlobalResponse = Response;
 
   type GlobalNextFunction = NextFunction;
+
+  type GlobalAddress = Address;
 }
