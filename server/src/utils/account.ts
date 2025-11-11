@@ -1,8 +1,8 @@
-import { createWalletClient, parseAbi, http, defineChain, type WalletClient } from "viem";
+import { createWalletClient, parseAbi, http, type WalletClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { PRIVATE_KEY } from "./env.utils";
 import { NexonsAddress } from "./constants";
-import { intuitionTestnet } from "./chain.utils";
+import chain from "./chain.utils";
 
 let walletClient: WalletClient | undefined = undefined;
 
@@ -12,7 +12,7 @@ const getWalletClient = () => {
 	if (!walletClient) {
 		walletClient = createWalletClient({
 			account,
-			chain: intuitionTestnet,
+			chain,
 			transport: http(),
 		});
 	}
@@ -41,7 +41,7 @@ export const performIntuitionOnchainAction = async ({
 				functionName: "joinCampaign",
 				args: [userId],
 				account: account.address,
-				chain: intuitionTestnet,
+				chain
 			});
 			return;
     case "allow-claim":
@@ -53,7 +53,7 @@ export const performIntuitionOnchainAction = async ({
 				functionName: "AllowCampaignRewardClaim",
 				args: [userId],
 				account: account.address,
-				chain: intuitionTestnet,
+				chain
 			});
 			return;
     case "allow-mint":
@@ -64,7 +64,7 @@ export const performIntuitionOnchainAction = async ({
 				functionName: "allowUserToMint",
 				args: [userId],
 				account: account.address,
-				chain: intuitionTestnet,
+				chain
       });
       return
 	}
