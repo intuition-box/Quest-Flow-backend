@@ -1,6 +1,7 @@
-import { defineChain } from "viem"
+import { defineChain } from "viem";
+import { environment } from "./env.utils";
 
-export const intuitionMainnet = defineChain({
+const intuitionMainnet = defineChain({
   id: 1155,
   name: "Intuition Mainnet",
   nativeCurrency: {
@@ -18,7 +19,7 @@ export const intuitionMainnet = defineChain({
   },
 });
 
-export const intuitionTestnet = defineChain({
+const intuitionTestnet = defineChain({
 	id: 13579,
 	name: "Intuition Testnet",
 	nativeCurrency: {
@@ -35,3 +36,7 @@ export const intuitionTestnet = defineChain({
 		default: { name: "Explorer", url: "https://testnet.explorer.intuition.systems" },
 	},
 });
+
+const chain = environment === "production" ? intuitionMainnet : intuitionTestnet;
+
+export default chain;
