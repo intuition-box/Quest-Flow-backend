@@ -1,11 +1,19 @@
 import logger from "@/config/logger";
 import { UNAUTHORIZED } from "@/utils/status.utils";
 import { JWT } from "@/utils/utils";
+import multer from "multer";
 
 type decodedDataType = {
   status: "project" | "user" | "admin";
   id: string;
 };
+
+const fileSize = 5 * (1024 ** 2); // 5 MB
+
+export const upload = multer({
+	storage: multer.memoryStorage(),
+	limits: { fileSize }
+});
 
 export const authenticateProject = async (req: GlobalRequest, res: GlobalResponse, next: GlobalNextFunction) => {
   try {

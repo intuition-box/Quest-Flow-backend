@@ -21,13 +21,6 @@ export function getS3Client() {
 	return s3;
 }
 
-const fileSize = 5 * (1024 ** 2); // 5 MB
-
-export const upload = multer({
-	storage: multer.memoryStorage(),
-	limits: { fileSize }
-});
-
 export const uploadImg = async ({
   file,
   filename,
