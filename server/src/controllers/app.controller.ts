@@ -1,4 +1,5 @@
 import logger from "@/config/logger";
+import { referrer } from "@/models/referrer.model";
 import { user } from "@/models/user.model";
 import { INTERNAL_SERVER_ERROR, OK, CREATED, BAD_REQUEST } from "@/utils/status.utils";
 
@@ -40,5 +41,24 @@ export const fetchUser = async (req: GlobalRequest, res: GlobalResponse) => {
   } catch (error) {
     logger.error(error);
     res.status(INTERNAL_SERVER_ERROR).json({ error: "error fetching user data" });
+  }
+}
+
+export const referralInfo = async (req: GlobalRequest, res: GlobalResponse) => {
+  try {
+    const id = req.id;
+    const userFetched = await user.findById(id);
+
+    if (!userFetched) {
+      res.status(BAD_REQUEST).json({ error: "invalid user id" });
+      return;
+    }
+
+    const usersReferred = await referrer.find({ user: id });
+
+    res.status(OK).json({ message: "referral info fetched!", referralCode: userFetched.referral!.code, usersReferred });
+  } catch (error) {
+    logger.error(error);
+    res.status(INTERNAL_SERVER_ERROR).json({ error: "error fetching referral info" });
   }
 }
