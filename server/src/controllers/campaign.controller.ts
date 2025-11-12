@@ -3,6 +3,7 @@ import { campaign, campaignCompleted } from "@/models/campaign.model";
 import { project } from "@/models/project.model";
 import { user } from "@/models/user.model";
 import { performIntuitionOnchainAction } from "@/utils/account";
+import { uploadImg } from "@/utils/img.utils";
 import { OK, INTERNAL_SERVER_ERROR, CREATED, BAD_REQUEST, NOT_FOUND, FORBIDDEN, UNAUTHORIZED } from "@/utils/status.utils";
 import { validateCampaignData } from "@/utils/utils";
 
@@ -37,6 +38,7 @@ export const fetchCampaigns = async (req: GlobalRequest, res: GlobalResponse) =>
 export const createCampaign = async (req: GlobalRequest, res: GlobalResponse) => {
   try {
     const requestData: ICreateCampaign = req.body;
+    const coverImageAsFile = req.file?.buffer;
 
     const projectUserId = req.id;
 
@@ -58,15 +60,27 @@ export const createCampaign = async (req: GlobalRequest, res: GlobalResponse) =>
       return;
     }
 
+    if (!coverImageAsFile) {
+      res.status(BAD_REQUEST).json({ error: "project cover image is required" });
+      return;
+    }
+
+    const projectCoverImageUrl = await uploadImg({
+      file: coverImageAsFile,
+      filename: req.file?.originalname as string,
+      folder: "campaigns",
+      maxSize: 2 * (1024 ** 2) // 2 MB
+    });
+
     const endDate = new Date(requestData.endDate);
 
     requestData.endDate = endDate;
 
     requestData.creator = projectUserId as string;
 
-    requestData.projectCoverImage = "img";
+    requestData.projectCoverImage = projectCoverImageUrl;
 
-    requestData.logo = "img";
+    requestData.logo = campaignCreator.logo;
 
     const newCampaign = new campaign(requestData);
 

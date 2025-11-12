@@ -13,6 +13,10 @@ const projectSchema = new Schema({
     type: String,
     required: true
   },
+  description: {
+    type: String,
+    required: true
+  },
   campaignsCreated: {
     type: Number,
     default: 0
