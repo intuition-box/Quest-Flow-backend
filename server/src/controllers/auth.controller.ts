@@ -9,10 +9,12 @@ import { formatDate } from "date-fns";
 import { user } from "@/models/user.model";
 import { getRefreshToken, JWT, validateProjectData } from "@/utils/utils";
 import { project } from "@/models/project.model";
+import { uploadImg } from "@/utils/img.utils";
+import { referrer } from "@/models/referrer.model";
 
 export const signUp = async (req: GlobalRequest, res: GlobalResponse) => {
 	try {
-		const { username, referrer }: { username: string; referrer?: string } =
+		const { username, referrer: referrerCode }: { username: string; referrer?: string } =
 			req.body;
 
 		if (!username || username.length < 4) {
@@ -22,7 +24,7 @@ export const signUp = async (req: GlobalRequest, res: GlobalResponse) => {
 			return;
 		}
 
-		const referrerCode = cryptoRandomString({
+		const userReferrerCode = cryptoRandomString({
 			length: 8,
 			type: "alphanumeric",
 		});
@@ -30,16 +32,18 @@ export const signUp = async (req: GlobalRequest, res: GlobalResponse) => {
 		const dateJoined = formatDate(new Date(), "MMM, y");
 
 		const referral = {
-			code: referrerCode,
+			code: userReferrerCode,
 		};
 
-		const userReferrer = await user.findOne({ referral: { code: referrer } });
+		const userReferrer = await user.findOne({ referral: { code: referrerCode } });
 
 		const newUser = new user({ username, referral, dateJoined });
 
 		if (userReferrer) {
 			await userReferrer.updateOne({ $inc: { xp: 10, "referral.xp": 10 } });
 			newUser.xp = 10;
+
+			await referrer.create({ user: userReferrer._id, referrerCode, username: newUser.username });
 			await newUser.save();
 		}
 
@@ -68,9 +72,11 @@ export const projectSignUp = async (
 	res: GlobalResponse
 ) => {
 	try {
-		const logo = "logo-p";
-
-		req.body.logo = logo;
+		const projectLogoAsFile = req.file?.buffer;
+		if (!projectLogoAsFile) {
+			res.status(BAD_REQUEST).json({ error: "project logo is required" });
+			return;
+		}
 
 		const { success } = validateProjectData(req.body);
 		if (!success) {
@@ -79,6 +85,14 @@ export const projectSignUp = async (
 				.json({ error: "send the correct data required to create a project" });
 			return;
 		}
+
+		const projectLogoUrl = await uploadImg({
+			file: projectLogoAsFile,
+			filename: req.file?.originalname as string,
+			folder: "project-logo",
+		});
+
+		req.body.logo = projectLogoUrl;
 
 		const projectUser = await project.create(req.body);
 
