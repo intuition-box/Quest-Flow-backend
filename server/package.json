@@ -8,6 +8,7 @@
     "dev": "bun --watch server"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/bun": "latest",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
@@ -19,6 +20,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.929.0",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "crypto-random-string": "^5.0.0",
     "date-fns": "^4.1.0",
