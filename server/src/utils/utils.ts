@@ -84,9 +84,22 @@ export const validateProjectData = (reqData: any) => {
     name: z.string().trim(),
     email: z.email().trim(),
     description: z.string().trim(),
+    password: z.string().trim(),
   });
 
   const parseData = projectSchema.safeParse(reqData);
+
+  return parseData;
+}
+
+export const validateUserSignUpData = (reqData: any) => {
+  const userSchema = z.object({
+    username: z.string().trim(),
+    email: z.email().trim(),
+    password: z.string().trim(),
+  });
+
+  const parseData = userSchema.safeParse(reqData);
 
   return parseData;
 }
