@@ -9,6 +9,10 @@ const projectSchema = new Schema({
     type: String,
     required: true
   },
+  password: {
+    type: String,
+    required: true
+  },
   logo: {
     type: String,
     required: true
